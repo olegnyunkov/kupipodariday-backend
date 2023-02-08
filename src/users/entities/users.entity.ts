@@ -1,46 +1,45 @@
-import { Column, Entity } from 'typeorm';
-import { Length } from 'class-validator';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { IsEmail, IsUrl, Length } from 'class-validator';
 import { General } from '../../utils/general.entity';
+import { Wish } from '../../wishes/entities/wishes.entity';
+import { Offer } from '../../offers/entities/offers.entity';
+import { Wishlist } from '../../wishlists/entities/wishlists.entity';
 
 @Entity()
 export class User extends General {
   @Column({
-    type: 'varchar',
     unique: true,
   })
   @Length(2, 30)
   username: string;
 
   @Column({
-    type: 'varchar',
     default: 'Пока ничего не рассказал о себе',
   })
   @Length(2, 200)
   about: string;
 
   @Column({
-    type: 'varchar',
     default: 'https://i.pravatar.cc/300',
   })
+  @IsUrl()
   avatar: string;
 
   @Column({
-    type: 'varchar',
     unique: true,
   })
+  @IsEmail()
   email: string;
 
-  @Column({
-    type: 'varchar',
-  })
+  @Column()
   password: string;
 
-  @Column()
-  wishes: string;
+  @OneToMany(() => Wish, (wishes) => wishes.owner)
+  wishes: Wish[];
 
-  @Column()
-  offers: string;
+  @OneToMany(() => Offer, (offers) => offers.user)
+  offers: Offer[];
 
-  @Column()
-  wishlists: string;
+  @OneToMany(() => Wishlist, (wishlists) => wishlists.owner)
+  wishlists: Wishlist[];
 }

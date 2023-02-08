@@ -1,25 +1,20 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { General } from '../../utils/general.entity';
+import { User } from '../../users/entities/users.entity';
+import { Wish } from '../../wishes/entities/wishes.entity';
 
 @Entity()
 export class Offer extends General {
-  @Column({
-    type: 'varchar',
-  })
-  user: string;
+  @ManyToOne(() => User, (users) => users.offers)
+  user: User;
 
-  @Column({
-    type: 'varchar',
-  })
-  item: string;
+  @ManyToOne(() => Wish, (wishes) => wishes.offers)
+  item: Wish;
 
-  @Column({
-    type: 'int',
-  })
+  @Column()
   amount: number;
 
   @Column({
-    type: 'boolean',
     default: false,
   })
   hidden: boolean;

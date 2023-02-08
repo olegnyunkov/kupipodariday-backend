@@ -19,6 +19,7 @@ import { Offer } from './offers/entities/offers.entity';
       username: 'student',
       password: 'student',
       database: 'nest_project',
+      schema: 'kupipodariday',
       entities: [User, Wish, Wishlist, Offer],
       synchronize: true,
     }),

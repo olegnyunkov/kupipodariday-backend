@@ -1,49 +1,47 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { General } from '../../utils/general.entity';
-import { Length } from 'class-validator';
+import { IsUrl, Length } from 'class-validator';
+import { User } from '../../users/entities/users.entity';
+import { Offer } from '../../offers/entities/offers.entity';
+import { Wishlist } from '../../wishlists/entities/wishlists.entity';
 
 @Entity()
 export class Wish extends General {
-  @Column({
-    type: 'varchar',
-  })
+  @Column()
   @Length(1, 250)
   name: string;
 
-  @Column({
-    type: 'varchar',
-  })
+  @Column()
+  @IsUrl()
   link: string;
 
-  @Column({
-    type: 'varchar',
-  })
+  @Column()
+  @IsUrl()
   image: string;
 
-  @Column({
-    type: 'int',
-  })
+  @Column()
   price: number;
 
   @Column({
-    type: 'int',
+    default: 0,
   })
   raised: number;
 
   @Column()
-  owner: string;
-
-  @Column({
-    type: 'varchar',
-  })
   @Length(1, 1024)
   description: string;
 
-  @Column()
-  offers: string;
-
   @Column({
-    type: 'int',
+    default: 0,
   })
   copied: number;
+
+  @ManyToOne(() => User, (owner) => owner.wishes)
+  owner: User;
+
+  @OneToMany(() => Offer, (offers) => offers.item)
+  offers: Offer[];
+
+  @ManyToOne(() => Wishlist, (wishlists) => wishlists.items)
+  wishlist: Wishlist;
 }
