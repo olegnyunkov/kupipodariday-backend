@@ -26,11 +26,3 @@ export class UsersService {
     return this.usersRepository.delete(id);
   }
 }
-
-// {
-//   "username": "User3",
-//   "email": "user3@mail.com",
-//   "password": "user3",
-//   "about": "I am User3",
-//   "avatar": "https://avatarko.ru/img/kartinka/33/zhivotnye_kot_computer_32912.jpg"
-// }

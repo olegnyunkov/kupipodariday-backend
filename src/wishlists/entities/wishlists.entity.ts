@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+} from 'typeorm';
 import { General } from '../../utils/general.entity';
 import { IsUrl, Length } from 'class-validator';
 import { Wish } from '../../wishes/entities/wishes.entity';
@@ -18,7 +24,8 @@ export class Wishlist extends General {
   @IsUrl()
   image: string;
 
-  @OneToMany(() => Wish, (wishes) => wishes.wishlist)
+  @ManyToMany(() => Wish)
+  @JoinTable()
   items: Wish[];
 
   @ManyToOne(() => User, (users) => users.wishlists)

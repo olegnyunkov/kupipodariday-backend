@@ -3,30 +3,31 @@ import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { WishesModule } from './wishes/wishes.module';
-import { WishlistsModule } from './wishlists/wishlists.module';
+
 import { OffersModule } from './offers/offers.module';
-import { User } from './users/entities/users.entity';
-import { Wish } from './wishes/entities/wishes.entity';
-import { Wishlist } from './wishlists/entities/wishlists.entity';
-import { Offer } from './offers/entities/offers.entity';
+import { AuthModule } from './auth/auth.module';
+import config from './config/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { HashModule } from './hash/hash.module';
+import { WishlistsModule } from './wishlists/wishlists.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'student',
-      password: 'student',
-      database: 'nest_project',
-      schema: 'kupipodariday',
-      entities: [User, Wish, Wishlist, Offer],
-      synchronize: true,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [config],
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (config) => config.get('config'),
+      inject: [ConfigService],
     }),
     UsersModule,
     WishesModule,
-    WishlistsModule,
     OffersModule,
+    AuthModule,
+    HashModule,
+    WishlistsModule,
   ],
   controllers: [AppController],
   providers: [],
