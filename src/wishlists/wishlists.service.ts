@@ -5,10 +5,20 @@ import { Wishlist } from './entities/wishlists.entity';
 
 @Injectable()
 export class WishlistsService {
-  constructor(
-    @InjectRepository(Wishlist) wishlistsRepository: Repository<Wishlist>,
-  ) {}
+  constructor(@InjectRepository(Wishlist) private readonly wishlistsRepository: Repository<Wishlist>) {}
   getWishlists() {
-    return 'hello';
+    return this.wishlistsRepository.find();
+  }
+
+  createWishlist(user, data) {
+    return this.wishlistsRepository.save(data);
+  }
+
+  updateWishlist(id, data) {
+    return this.wishlistsRepository.update(id, data);
+  }
+
+  removeWishlist(id) {
+    return this.wishlistsRepository.delete(id);
   }
 }

@@ -1,11 +1,24 @@
-import * as process from 'process';
+import { ConfigService } from '@nestjs/config';
+import { User } from '../users/entities/users.entity';
+import { Wish } from '../wishes/entities/wishes.entity';
+import { Wishlist } from '../wishlists/entities/wishlists.entity';
+import { Offer } from '../offers/entities/offers.entity';
 
-export default () => ({
-  type: process.env.DB_TYPE,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  schema: process.env.DB_SCHEMA,
+export const typeOrmConfig = (configService: ConfigService) => ({
+  type: configService.get('DB_TYPE'),
+  host: configService.get('DB_HOST'),
+  port: configService.get('DB_PORT'),
+  username: configService.get('DB_USERNAME'),
+  password: configService.get('DB_PASSWORD'),
+  database: configService.get('DB_DATABASE'),
+  schema: configService.get('DB_SCHEMA'),
+  entities: [User, Wish, Wishlist, Offer],
+  synchronize: configService.get('DB_SYNCHRONIZE'),
+});
+
+export const jwtConfig = (configService: ConfigService) => ({
+  secret: configService.get('JWT_SECRET-KEY'),
+  signOptions: {
+    expiresIn: configService.get('JWT_LIFETIME'),
+  },
 });

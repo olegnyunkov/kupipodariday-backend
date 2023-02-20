@@ -1,26 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { WishesModule } from './wishes/wishes.module';
-
 import { OffersModule } from './offers/offers.module';
 import { AuthModule } from './auth/auth.module';
-import config from './config/config';
+import { typeOrmConfig } from './config/config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HashModule } from './hash/hash.module';
 import { WishlistsModule } from './wishlists/wishlists.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [config],
-    }),
+    ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config) => config.get('config'),
       inject: [ConfigService],
+      useFactory: typeOrmConfig,
     }),
     UsersModule,
     WishesModule,
@@ -29,7 +24,7 @@ import { WishlistsModule } from './wishlists/wishlists.module';
     HashModule,
     WishlistsModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}

@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-} from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { General } from '../../utils/general.entity';
 import { IsUrl, Length } from 'class-validator';
 import { Wish } from '../../wishes/entities/wishes.entity';

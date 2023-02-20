@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { HashService } from './hash.service';
-import { HashController } from './hash.controller';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  controllers: [HashController],
-  providers: [HashService]
+  imports: [ConfigModule.forRoot()],
+  providers: [HashService],
+  exports: [HashService],
 })
 export class HashModule {}

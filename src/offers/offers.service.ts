@@ -10,7 +10,15 @@ export class OffersService {
     private readonly offersRepository: Repository<Offer>,
   ) {}
 
-  getOffers() {
-    return this.offersRepository.find();
+  async getOffers() {
+    return await this.offersRepository.find();
+  }
+
+  async getOfferById(id) {
+    return await this.offersRepository.findOne(id);
+  }
+
+  async createOffer() {
+    return;
   }
 }
