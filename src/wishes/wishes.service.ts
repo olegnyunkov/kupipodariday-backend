@@ -1,22 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Wish } from './entities/wishes.entity';
 import { rethrow } from '@nestjs/core/helpers/rethrow';
+import { errors } from '../utils/errors';
 
 @Injectable()
 export class WishesService {
   constructor(
     @InjectRepository(Wish)
-    private wishesRepository: Repository<Wish>,
+    private readonly wishesRepository: Repository<Wish>,
   ) {}
 
-  createWish(user, data) {
-    return this.wishesRepository.save({ ...data, owner: user });
+  async createWish(user, data) {
+    return await this.wishesRepository.save({ ...data, owner: user });
   }
 
-  getById(id) {
-    return this.wishesRepository.findOne({
+  async getById(id) {
+    return await this.wishesRepository.findOne({
       where: { id },
       relations: {
         owner: true,
@@ -25,12 +26,15 @@ export class WishesService {
     });
   }
 
-  updateWish(id, data) {
-    return this.wishesRepository.update(id, data);
+  async updateWish(id, data) {
+    return await this.wishesRepository.update(id, data);
   }
 
-  removeWish(id) {
-    return this.wishesRepository.delete(id);
+  async removeWish(id, data) {
+    const wish = await this.wishesRepository.findOneBy(id);
+    if (wish.owner.id !== data.user.id)
+      throw new BadRequestException(errors.NOT_ALLOWED);
+    return await this.wishesRepository.delete(id);
   }
 
   async findUserWishes(id) {
@@ -56,5 +60,9 @@ export class WishesService {
 
   async copyUserWishes() {
     return;
+  }
+
+  async updateWishCount(id, count) {
+    return await this.wishesRepository.update(id, { raised: count });
   }
 }

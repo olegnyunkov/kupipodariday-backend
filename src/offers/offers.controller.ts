@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { OffersService } from './offers.service';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 
@@ -8,8 +16,8 @@ export class OffersController {
   constructor(private readonly offersService: OffersService) {}
 
   @Post()
-  async createOffer() {
-    return await this.offersService.createOffer();
+  async createOffer(@Body() data, @Req() info) {
+    return await this.offersService.createOffer(data, info);
   }
 
   @Get()
