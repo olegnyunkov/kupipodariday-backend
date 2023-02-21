@@ -14,7 +14,7 @@ import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 
 @UseGuards(JwtGuard)
-@Controller('wishlists')
+@Controller('wishlistlists')
 export class WishlistsController {
   constructor(private readonly wishlistService: WishlistsService) {}
   @Get()

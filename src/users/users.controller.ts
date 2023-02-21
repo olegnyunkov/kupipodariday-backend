@@ -29,7 +29,7 @@ export class UsersController {
 
   @Get('me')
   async getUser(@Req() data) {
-    return this.userService.findUserById(data.id);
+    return this.userService.findUserById(data.user.id);
   }
 
   @Patch('me')
@@ -53,7 +53,7 @@ export class UsersController {
     return await this.wishesService.findUserWishes(user.id);
   }
 
-  @Get('find')
+  @Post('find')
   async findMany(@Body('query') data) {
     return await this.userService.searchUsers(data);
   }

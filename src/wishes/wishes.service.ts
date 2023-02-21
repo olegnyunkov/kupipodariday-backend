@@ -16,7 +16,13 @@ export class WishesService {
   }
 
   getById(id) {
-    return this.wishesRepository.findOneBy(id);
+    return this.wishesRepository.findOne({
+      where: { id },
+      relations: {
+        owner: true,
+        offers: true,
+      },
+    });
   }
 
   updateWish(id, data) {

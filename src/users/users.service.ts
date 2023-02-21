@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { User } from './entities/users.entity';
 import { HashService } from '../hash/hash.service';
 import { errors } from '../utils/errors';
@@ -27,10 +27,20 @@ export class UsersService {
 
   async updateUser(id, data) {
     const user = await this.usersRepository.findOneBy({ id });
-    console.log(data);
-    if (!(user.username === data.username))
+    if (data.email && user.email !== data.email)
       throw new BadRequestException(errors.WRONG_DATA);
-    return await this.usersRepository.update(id, data);
+    if (data.password)
+      data.password = await this.hashService.hashPassword(data.password);
+    const updatedUser = {
+      ...user,
+      username: data?.username,
+      password: data?.password,
+      email: data?.email,
+      about: data?.about,
+      avatar: data?.avatar,
+    };
+    console.log(data);
+    return await this.usersRepository.update(id, updatedUser);
   }
 
   async removeUser(id) {
@@ -50,6 +60,8 @@ export class UsersService {
   }
 
   async searchUsers(data) {
-    return await this.usersRepository.find(data);
+    return await this.usersRepository.find({
+      where: [{ username: Like(`${data}%`) }, { email: Like(`${data}%`) }],
+    });
   }
 }
