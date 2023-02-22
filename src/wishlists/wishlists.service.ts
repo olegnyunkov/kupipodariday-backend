@@ -19,11 +19,11 @@ export class WishlistsService {
   }
 
   async createWishlist(user, data) {
-    const userWishes = await this.wishesService.findUserWishes(data.id);
+    const wishes = await this.wishesService.searchWishesById(data);
     await this.wishlistsRepository.save({
       ...data,
       owner: user,
-      items: userWishes,
+      items: wishes,
     });
     return await this.wishlistsRepository.findOne({
       where: { name: data.name },
@@ -32,10 +32,10 @@ export class WishlistsService {
   }
 
   async updateWishlist(id, dto, data) {
-    const wishlist = await this.wishlistsRepository.findOneBy({ id });
-    const userWishes = await this.wishesService.findUserWishes(data.id);
-    console.log(wishlist, userWishes);
-    return this.wishlistsRepository.update(id, {
+    const wishlist = await this.getWishlistsById(id);
+    if (!wishlist) throw new BadRequestException(errors.NOT_CREATED);
+    const userWishes = await this.wishesService.searchWishesById(dto);
+    return this.wishlistsRepository.save({
       ...wishlist,
       name: dto.name,
       image: dto.image,
@@ -45,13 +45,16 @@ export class WishlistsService {
   }
 
   async removeWishlist(id, data) {
-    const wishlist = await this.wishlistsRepository.findOneBy({ id });
+    const wishlist = await this.getWishlistsById(id);
     if (wishlist.owner.id !== data.user.id)
       throw new BadRequestException(errors.NOT_ALLOWED);
     return this.wishlistsRepository.delete(id);
   }
 
   async getWishlistsById(id) {
-    return await this.wishlistsRepository.findOneBy({ id });
+    return await this.wishlistsRepository.findOne({
+      where: { id },
+      relations: ['owner', 'items'],
+    });
   }
 }

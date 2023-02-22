@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { errors } from '../utils/errors';
 import { HashService } from '../hash/hash.service';
@@ -24,5 +28,12 @@ export class AuthService {
     );
     if (!checkPassword) throw new UnauthorizedException(errors.WRONG_DATA);
     return checkedUser;
+  }
+
+  async registerUser(data) {
+    const userExists = await this.usersService.findUserByEmail(data.email);
+    if (userExists) throw new BadRequestException(errors.USER_EXISTS);
+    const createdUser = await this.usersService.createUser(data);
+    return this.authUser(createdUser);
   }
 }

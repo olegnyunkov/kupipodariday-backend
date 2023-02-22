@@ -13,10 +13,6 @@ export class UsersService {
     private readonly hashService: HashService,
   ) {}
 
-  async getUsers() {
-    return await this.usersRepository.find();
-  }
-
   async createUser(data) {
     const hashedPassword = await this.hashService.hashPassword(data.password);
     return await this.usersRepository.save({
@@ -39,12 +35,8 @@ export class UsersService {
       about: data?.about,
       avatar: data?.avatar,
     };
-    console.log(data);
-    return await this.usersRepository.update(id, updatedUser);
-  }
-
-  async removeUser(id) {
-    return await this.usersRepository.delete(id);
+    await this.usersRepository.update(id, updatedUser);
+    return await this.usersRepository.findOneBy({ id });
   }
 
   async findUserByEmail(email) {
@@ -55,7 +47,7 @@ export class UsersService {
     return await this.usersRepository.findOneBy({ username });
   }
 
-  async findUserById(id: number): Promise<User> {
+  async findUserById(id: number) {
     return await this.usersRepository.findOneBy({ id });
   }
 

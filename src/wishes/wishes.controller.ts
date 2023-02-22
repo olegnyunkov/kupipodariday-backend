@@ -13,6 +13,8 @@ import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { JwtGuard } from '../auth/guards/jwt.guard';
+import { NotFoundError } from 'rxjs';
+import { errors } from '../utils/errors';
 
 @Controller('wishes')
 export class WishesController {
@@ -20,7 +22,9 @@ export class WishesController {
   @UseGuards(JwtGuard)
   @Post()
   async create(@Req() data, @Body() createWishDto: CreateWishDto) {
-    return await this.wishesService.createWish(data.user, createWishDto);
+    const wish = await this.wishesService.createWish(data.user, createWishDto);
+    delete wish.owner.password;
+    return wish;
   }
 
   @Get('last')
@@ -35,8 +39,11 @@ export class WishesController {
 
   @UseGuards(JwtGuard)
   @Get(':id')
-  getById(@Param('id') id: string) {
-    return this.wishesService.getById(+id);
+  async getById(@Param('id') id: string) {
+    const wish = await this.wishesService.getById(+id);
+    if (!wish) throw new NotFoundError(errors.NOT_FOUND);
+    delete wish.owner.password;
+    return wish;
   }
 
   @UseGuards(JwtGuard)

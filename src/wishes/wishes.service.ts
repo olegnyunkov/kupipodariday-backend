@@ -1,8 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Wish } from './entities/wishes.entity';
-import { rethrow } from '@nestjs/core/helpers/rethrow';
 import { errors } from '../utils/errors';
 
 @Injectable()
@@ -31,7 +30,7 @@ export class WishesService {
   }
 
   async removeWish(id, data) {
-    const wish = await this.wishesRepository.findOneBy(id);
+    const wish = await this.getById(id);
     if (wish.owner.id !== data.user.id)
       throw new BadRequestException(errors.NOT_ALLOWED);
     return await this.wishesRepository.delete(id);
@@ -64,5 +63,11 @@ export class WishesService {
 
   async updateWishCount(id, count) {
     return await this.wishesRepository.update(id, { raised: count });
+  }
+
+  async searchWishesById(data) {
+    return await this.wishesRepository.find({
+      where: { id: In(data.itemsId) },
+    });
   }
 }
