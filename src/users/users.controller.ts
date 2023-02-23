@@ -66,6 +66,9 @@ export class UsersController {
 
   @Post('find')
   async findMany(@Body('query') data) {
-    return await this.userService.searchUsers(data);
+    const users = await this.userService.searchUsers(data);
+    if (!users) throw new NotFoundError(errors.NOT_FOUND);
+    users.map((user) => delete user.password);
+    return users;
   }
 }

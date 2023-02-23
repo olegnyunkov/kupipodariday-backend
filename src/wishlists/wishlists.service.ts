@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Wishlist } from './entities/wishlists.entity';
@@ -46,9 +46,11 @@ export class WishlistsService {
 
   async removeWishlist(id, data) {
     const wishlist = await this.getWishlistsById(id);
+    if (!wishlist) throw new NotFoundException(errors.NOT_FOUND);
     if (wishlist.owner.id !== data.user.id)
       throw new BadRequestException(errors.NOT_ALLOWED);
-    return this.wishlistsRepository.delete(id);
+    await this.wishlistsRepository.delete(id);
+    return wishlist;
   }
 
   async getWishlistsById(id) {

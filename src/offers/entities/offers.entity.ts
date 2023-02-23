@@ -8,7 +8,9 @@ export class Offer extends General {
   @ManyToOne(() => User, (users) => users.offers)
   user: User;
 
-  @ManyToOne(() => Wish, (wishes) => wishes.offers)
+  @ManyToOne(() => Wish, (wishes) => wishes.offers, {
+    onDelete: 'CASCADE',
+  })
   item: Wish;
 
   @Column()

@@ -39,7 +39,9 @@ export class Wish extends General {
   @ManyToOne(() => User, (owner) => owner.wishes)
   owner: User;
 
-  @OneToMany(() => Offer, (offers) => offers.item)
+  @OneToMany(() => Offer, (offers) => offers.item, {
+    cascade: true,
+  })
   offers: Offer[];
 
   @ManyToOne(() => Wishlist, (wishlists) => wishlists.items)

@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Wish } from './entities/wishes.entity';
 import { errors } from '../utils/errors';
+import { NotFoundError } from "rxjs";
 
 @Injectable()
 export class WishesService {
@@ -31,16 +32,20 @@ export class WishesService {
 
   async removeWish(id, data) {
     const wish = await this.getById(id);
+    if (!wish) throw new NotFoundException(errors.NOT_FOUND);
     if (wish.owner.id !== data.user.id)
       throw new BadRequestException(errors.NOT_ALLOWED);
-    return await this.wishesRepository.delete(id);
+    await this.wishesRepository.delete({ id });
+    return wish;
   }
 
   async findUserWishes(id) {
-    return await this.wishesRepository.find({
+    const userWishes = await this.wishesRepository.find({
       where: { owner: { id } },
       relations: ['offers', 'owner'],
     });
+    userWishes.map((userWish) => delete userWish.owner.password);
+    return userWishes;
   }
 
   async findLast() {
