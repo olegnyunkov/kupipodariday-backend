@@ -61,7 +61,10 @@ export class WishlistsController {
   }
 
   @Delete(':id')
-  removeWishlist(@Param('id') id: string, @Req() data) {
-    return this.wishlistService.removeWishlist(id, data);
+  async removeWishlist(@Param('id') id: string, @Req() data) {
+    const wishlist = await this.wishlistService.removeWishlist(id, data);
+    if (!wishlist) throw new NotFoundError(errors.NOT_FOUND);
+    delete wishlist.owner.password;
+    return wishlist;
   }
 }

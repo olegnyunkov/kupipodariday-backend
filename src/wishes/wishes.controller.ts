@@ -48,14 +48,17 @@ export class WishesController {
 
   @UseGuards(JwtGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWishDto: UpdateWishDto) {
-    return this.wishesService.updateWish(id, updateWishDto);
+  async update(@Param('id') id: string, @Body() updateWishDto: UpdateWishDto) {
+    return await this.wishesService.updateWish(id, updateWishDto);
   }
 
   @UseGuards(JwtGuard)
   @Delete(':id')
-  remove(@Param('id') id: string, @Req() data) {
-    return this.wishesService.removeWish(+id, data);
+  async remove(@Param('id') id: string, @Req() data) {
+    const wish = await this.wishesService.removeWish(+id, data);
+    if (!wish) throw new NotFoundError(errors.NOT_FOUND);
+    delete wish.owner.password;
+    return wish;
   }
 
   @Post(':id/copy')
